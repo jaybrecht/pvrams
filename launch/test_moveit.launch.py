@@ -1,13 +1,9 @@
 from launch import LaunchDescription
-from launch.actions import OpaqueFunction, IncludeLaunchDescription
-
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import OpaqueFunction
 
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
 
-from moveit_configs_utils import MoveItConfigsBuilder
-
+from moveit_configs_utils import MoveItConfigsBuilder   
 
 def launch_setup(context, *args, **kwargs):
     moveit_config = (
@@ -30,22 +26,9 @@ def launch_setup(context, *args, **kwargs):
             moveit_config.to_dict(),
         ],
     )
-    
-    # Robot Bringup
-    robot_bringup = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [FindPackageShare("ur_robot_driver"), "/launch", "/ur_control.launch.py"]
-        ),
-        launch_arguments={
-            'ur_type': 'ur5e',
-            'robot_ip': '192.168.0.1',
-            'launch_rviz': 'false'
-        }.items()
-    )
 
     nodes_to_start = [
         move_it_test,
-        robot_bringup,
     ]
 
     return nodes_to_start
